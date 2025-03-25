@@ -9,13 +9,8 @@ const layout = ({
   }>) => {
   return (
     <main>
-      <div className="flex p-4  items-center justify-center gap-2">
-        <Image
-          src="/logo.png"
-          alt="Picture of the author"
-          width={50}
-          height={50}/>
-          <div className='text-2xl font-bold'>Books Management Platform</div>
+      <div className="flex pl-10 pt-8 p-5  items-center  gap-2">
+          <div className='text-3xl font-bold'>User Dashboard</div>
       </div>
       <div className='flex justify-center items-center'>
        <Header/>
