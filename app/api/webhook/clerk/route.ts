@@ -5,7 +5,9 @@ import { createUser, deleteUser, updateUser} from "@/lib/actions/users.action";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECERET;
+  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+
+  console.log("WEBHOOK_SECRET:", process.env.WEBHOOK_SECRET);
 
   if (!WEBHOOK_SECRET) {
     throw new Error("Missing WEBHOOK_SECRET");
