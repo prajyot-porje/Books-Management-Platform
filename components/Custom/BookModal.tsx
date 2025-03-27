@@ -17,7 +17,7 @@ const BookModal = ({ section }: { section: Book }) => {
         <Modal>
             <ModalTrigger>
                 <div className='flex space-x-5 p-5 pl-32 '>
-                    <Image src={section.img} alt={section.img} height={100} width={100} />
+                    <Image src={section.img} alt={section.img} height={130} width={130} />
                     <div className='flex flex-col items-start space-y-2 justify-center'>
                         <div className='text-xl'>{section.title}</div>
                         <div className='text-sm text-[#515151]'>by {section.auth}</div>
@@ -27,8 +27,8 @@ const BookModal = ({ section }: { section: Book }) => {
                 </div>
             </ModalTrigger>
             <ModalBody>
-                <div>
-
+                <div className='flex items-center w-full h-screen justify-center'>
+                    Still Working
                 </div>
             </ModalBody>
         </Modal>

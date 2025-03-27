@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const NEXT_PUBLIC_MONGODB_URI = process.env.NEXT_PUBLIC_MONGODB_URI;
 
 let cached = (global as any).mongoose || { conn: null, promise: null };
 
@@ -8,10 +8,10 @@ export const connectToDatabase = async () => {
     
   if (cached.conn) return cached.conn;
 
-  if(!MONGODB_URI) throw new Error('MONGODB_URI is missing');
+  if(!NEXT_PUBLIC_MONGODB_URI) throw new Error('MONGODB_URI is missing');
 
-  cached.promise = cached.promise || mongoose.connect(MONGODB_URI, {
-    dbName: 'Library-managment-platform',
+  cached.promise = cached.promise || mongoose.connect(NEXT_PUBLIC_MONGODB_URI, {
+    dbName: 'Books_Management_platform',
     bufferCommands: false,
   })
 

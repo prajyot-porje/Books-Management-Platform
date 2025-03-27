@@ -1,6 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
-import { a, img } from "framer-motion/client";
-
 export const UserNavitems = [
   {
     name: "Home",
@@ -23,7 +20,6 @@ export const UserNavitems = [
 export const placeholders = [
   "Search by Title",
   "Search by Author",
-  "Search by ISBN",
   "Search by Publisher",
 ];
 

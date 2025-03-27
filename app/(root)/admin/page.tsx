@@ -1,6 +1,7 @@
 "use client";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import { placeholders } from "@/constants";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const page = () => {
@@ -46,9 +47,9 @@ const page = () => {
             Borrowed
           </button>
         </div>
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+        <Link href='/admin/addBooks' className="px-4 py-2 bg-blue-500 text-white rounded-md">
           Add Books
-        </button>
+        </Link>
       </div>
     </div>
   );
