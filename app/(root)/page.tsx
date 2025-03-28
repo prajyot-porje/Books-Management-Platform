@@ -1,5 +1,6 @@
 'use client';
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
+import { SignedOut } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -25,15 +26,20 @@ const page = () => {
   ];
   return (
     <div className="h-screen w-screen flex justify- items-center relative">
-      <div className=" absolute top-[39px] left-[85px] w-[1300px] flex items-center justify-between ">
+      <div className=" absolute top-[29px] left-[85px] w-[1300px] flex items-center justify-between ">
+        <div className="flex items-center ">
+          <img src="/logo.jpg" alt="logo" height={100} width={100} />
         <div className="text-4xl font-bold">LibraryHub</div>
+        </div>
         <div className="flex items-center space-x-5">
           <Link href='/admin' className="shadow-[0_4px_14px_0_rgb(0,118,255,39%)] hover:shadow-[0_6px_20px_rgba(0,118,255,23%)] hover:bg-[rgba(0,118,255,0.9)] px-8 py-2 bg-[#0070f3] rounded-md text-white font-light transition duration-200 ease-linear">
             Admin
           </Link>
+          <SignedOut>
           <Link href='/user' className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent  border-black dark:border-white dark:text-white text-black hover:invert-50 rounded-lg font-bold ">
             Login
           </Link>
+          </SignedOut>
         </div>
       </div>
       <div className="pl-20">

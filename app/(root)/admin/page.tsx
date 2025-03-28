@@ -6,7 +6,7 @@ import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-van
 import { placeholders } from "@/constants";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, BookOpenCheck, Loader2 } from 'lucide-react';
+import { PlusCircle, BookOpenCheck, Loader2 } from "lucide-react";
 
 const BooksPage = () => {
   const [status, setStatus] = useState("all books");
@@ -47,10 +47,13 @@ const BooksPage = () => {
   }, [status]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-2">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-        <h1 className="text-3xl font-bold">LibraryHub</h1>
+          <div className="flex items-center ">
+            <img src="/logo.jpg" alt="logo" height={100} width={100} />
+            <div className="text-3xl font-bold">LibraryHub</div>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="default">
@@ -77,9 +80,9 @@ const BooksPage = () => {
       </div>
 
       <div className="mb-8">
-        <Tabs 
-          defaultValue="all books" 
-          value={status} 
+        <Tabs
+          defaultValue="all books"
+          value={status}
           onValueChange={handleStatusChange}
           className="w-full"
         >
@@ -100,8 +103,8 @@ const BooksPage = () => {
           <BookOpenCheck className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-xl font-medium">No books found</h3>
           <p className="text-muted-foreground mt-2">
-            {status === "all books" 
-              ? "There are no books in the library yet." 
+            {status === "all books"
+              ? "There are no books in the library yet."
               : "There are no borrowed books at the moment."}
           </p>
           {status === "all books" && (
