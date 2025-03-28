@@ -12,22 +12,10 @@ const page = () => {
   const returnedClick = () => {
     setStatus('returned');
   }
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-  };
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("submitted");
-  };
+
   return (
     <div>
-      <div className="py-8 w-full">
-        <PlaceholdersAndVanishInput
-          placeholders={placeholders}
-          onChange={handleChange}
-          onSubmit={onSubmit}
-        />
-      </div>
+      
       <div className="flex pl-32 p-6 space-x-4 ">
         <button
           onClick={borrowClick}

@@ -8,12 +8,12 @@ export const UserNavitems = [
     link: "/user/history",
   },
   {
-    name: "Wishlist",
-    link: "/user/wishlist",
+    name: "All Books",
+    link: "/user/allbooks",
   },
   {
-    name: "Profile",
-    link: "/user/profile",
+    name: "Requests",
+    link: "/user/userRequests",
   },
 ];
 

@@ -2,22 +2,18 @@ import React, { useState } from "react";
 import { useAuth } from "@clerk/nextjs"; // Import Clerk's useAuth hook
 import Image from "next/image";
 import { Modal, ModalBody, ModalTrigger } from "../ui/animated-modal";
+import { IBook } from "@/lib/database/models/books.model";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { AlertCircle, BookOpen, Calendar, DollarSign, Grid, IndianRupee, Tag, Users } from "lucide-react";
+import { Separator } from "../ui/separator";
 
-interface Book {
-  id: string;
-  title: string;
-  auth: string;
-  img: string;
-  publishedDate: string;
-  fine: string;
-  status: string;
-  isbn?: string; 
-}
-
-const BookModal = ({ section, isAdmin }: { section: Book; isAdmin: boolean }) => {
+const BookModal = ({ section, isAdmin }: { section: IBook; isAdmin: boolean }) => {
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error">("error")
   const { userId } = useAuth(); // Get the Clerk user ID
 
   const handleBorrow = async () => {
@@ -56,11 +52,23 @@ const BookModal = ({ section, isAdmin }: { section: Book; isAdmin: boolean }) =>
     }
   };
 
+  // Format the date to "month/year"
+  const formatDate = (date: string | Date) => {
+    const parsedDate = new Date(date); // Convert string to Date object
+    if (isNaN(parsedDate.getTime())) {
+      return "Invalid Date"; // Handle invalid date inputs
+    }
+    return new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(parsedDate);
+  };
+
   return (
     <div>
       <Modal>
         <ModalTrigger>
-          <div className="flex space-x-5 p-5 pl-32 ">
+          <div
+            className="flex space-x-5 p-5 w-[400px] h-[200px] border border-gray-300 rounded-md"
+            style={{ overflow: "hidden" }}
+          >
             {imageError ? (
               <div className="flex items-center justify-center h-[130px] w-[130px] bg-gray-200 text-gray-500">
                 Image not available
@@ -71,61 +79,105 @@ const BookModal = ({ section, isAdmin }: { section: Book; isAdmin: boolean }) =>
                 alt={section.img}
                 height={130}
                 width={130}
+                className="object-cover"
                 onError={() => setImageError(true)}
               />
             )}
-            <div className="flex flex-col items-start space-y-2 justify-center">
-              <div className="text-xl">{section.title}</div>
-              <div className="text-sm text-[#515151]">by {section.auth}</div>
-              <div className="text-sm text-[#515151]">
-                Published on {section.publishedDate}
+            <div className="flex flex-col items-start space-y-2 justify-center text-left w-full">
+              <div className="text-xl font-semibold overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+                {section.title}
               </div>
-              <div className="text-sm text-[#515151]">
-                Status: {section.status}
+              <div className="text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+                by {section.author}
               </div>
+              <div className="text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+                Published on {formatDate(section.publishedDate)}
+              </div>
+              <Badge className="bg-green-400" variant={section.status.toLowerCase() === "available" ? "default" : "destructive"}>
+                {section.status.toLowerCase() === "available" ? "Available" : "Not Available"}
+              </Badge>
             </div>
           </div>
         </ModalTrigger>
         <ModalBody>
-          <div className="flex items-center h-[400px] justify-start px-10">
-            <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col md:flex-row gap-8 p-6 max-w-3xl mx-auto">
+            {/* Image Section */}
+            <div className="flex-shrink-0">
               {imageError ? (
-                <div className="flex items-center justify-center h-[200px] w-[200px] bg-gray-200 text-gray-500 border-2 border-gray-400">
+                <div className="flex items-center justify-center h-[250px] w-[200px] bg-muted text-muted-foreground rounded-md border border-border">
                   Image not available
                 </div>
               ) : (
                 <img
-                  src={section.img}
-                  alt={section.img}
-                  height={200}
+                  src={section.img || "/placeholder.svg"}
+                  alt={section.title}
+                  height={250}
                   width={200}
-                  className="border-2 border-gray-400"
+                  className="object-cover rounded-md border border-border shadow-sm"
                   onError={() => setImageError(true)}
                 />
               )}
             </div>
-            <div className="flex flex-col items-start justify-center p-5">
-              <div className="text-3xl font-bold">{section.title}</div>
-              <div className="text-xl">by {section.auth}</div>
-              <div className="text-xl text-[#515151]">
-                Published on {section.publishedDate}
+
+            {/* Details Section */}
+            <div className="flex flex-col flex-1 space-y-4">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">{section.title}</h2>
+                <p className="text-lg text-muted-foreground">by {section.author}</p>
               </div>
-              <div className="text-xl text-[#515151]">
-                Status: {section.status}
+
+              <Separator />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span>Published: {formatDate(section.publishedDate)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                  <span>Publisher: {section.publisher}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-muted-foreground" />
+                  <span>Category: {section.category}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <IndianRupee className="h-4 w-4 text-muted-foreground" />
+                  <span>Price: Rs.{section.price.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Grid className="h-4 w-4 text-muted-foreground" />
+                  <span>Quantity: {section.quantity}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span>Status: </span>
+                  <Badge className="bg-green-400 " variant={section.status.toLowerCase() === "available" ? "default" : "destructive"}>
+                    {section.status.toLowerCase() === "available" ? "Available" : "Not Available"}
+                  </Badge>
+                </div>
               </div>
+
+              {/* Borrow Button */}
               {!isAdmin && (
-                <>
-                  <button
-                    className="bg-blue-500 text-white px-5 py-2 rounded-md mt-5"
+                <div className="mt-4 space-y-3">
+                  <Button
+                    className="w-full sm:w-auto"
                     onClick={handleBorrow}
-                    disabled={loading}
+                    disabled={loading || section.status.toLowerCase() !== "available"}
                   >
-                    {loading ? "Processing..." : "Borrow"}
-                  </button>
+                    {loading ? "Processing..." : "Borrow Book"}
+                  </Button>
+
                   {message && (
-                    <div className="mt-3 text-sm text-red-500">{message}</div>
+                    <Alert >
+                      <AlertCircle className={`h-4 w-4 ${messageType === "success" ? "text-red-500" : "text-green-500"}`} />
+                      <AlertDescription className={messageType === "success" ? "text-red-500" : "text-green-500"}>
+                      {message}
+                      </AlertDescription>
+                    </Alert>
                   )}
-                </>
+                </div>
               )}
             </div>
           </div>

@@ -26,4 +26,7 @@ const BookSchema: Schema = new Schema({
   status: { type: String, default: "Available" },
 });
 
+console.log("Mongoose Models:", mongoose.models); // Debugging log
+console.log("Registering Book Model...");
+
 export default mongoose.models.Book || mongoose.model<IBook>("Book", BookSchema);
