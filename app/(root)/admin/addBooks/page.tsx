@@ -1,6 +1,7 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
+import { IoCloseOutline } from "react-icons/io5";
 import { motion } from "framer-motion"
 import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,8 +9,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BookOpen, Save, Loader2 } from "lucide-react"
+import { BookOpen, Save, Loader2, CroissantIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 const AddBookPage = () => {
   const router = useRouter(); // Move this here
@@ -99,6 +101,9 @@ const AddBookPage = () => {
 
   return (
     <div className="container mx-auto py-10 px-4 flex items-center justify-center min-h-screen">
+      <Link href='/admin' className='absolute top-6 right-6'>
+      <IoCloseOutline className='h-6 w-6 text-gray-500 hover:text-gray-700' />
+      </Link>
       <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-3xl w-full">
       <Card className="border-primary/20 shadow-lg">
         <CardHeader className="space-y-1">

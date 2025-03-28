@@ -26,7 +26,7 @@ const page = () => {
   return (
     <div className="h-screen w-screen flex justify- items-center relative">
       <div className=" absolute top-[39px] left-[85px] w-[1300px] flex items-center justify-between ">
-        <div className="text-4xl font-bold">Website name</div>
+        <div className="text-4xl font-bold">LibraryHub</div>
         <div className="flex items-center space-x-5">
           <Link href='/admin' className="shadow-[0_4px_14px_0_rgb(0,118,255,39%)] hover:shadow-[0_6px_20px_rgba(0,118,255,23%)] hover:bg-[rgba(0,118,255,0.9)] px-8 py-2 bg-[#0070f3] rounded-md text-white font-light transition duration-200 ease-linear">
             Admin

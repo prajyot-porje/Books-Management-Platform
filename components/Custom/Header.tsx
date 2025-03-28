@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 const Header = () => {
   const route = usePathname();
   return (
-    <div className="bg-[#DFDFDF] text-[#7A7A7A] h-[50px] w-[1160px] text-xl font-semibold rounded-[15px] flex">
+    <div className="bg-[#DFDFDF] text-black h-[50px] w-[1160px] text-xl font-semibold rounded-[15px] flex">
       {UserNavitems.map((item, index) => (
         <Link
           key={index}
