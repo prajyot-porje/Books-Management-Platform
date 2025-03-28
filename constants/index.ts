@@ -47,7 +47,7 @@ export const books = {
 export const borrow = [
   {
     title: "Atomic Habits",
-    img: "/images/book1.png",
+    img: "https://m.media-amazon.com/images/I/81F90H7hnML._AC_UF1000,1000_QL80_.jpg",
     auth: "James Clear",
     id: "123",
     due: "15/10/2025",

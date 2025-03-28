@@ -1,6 +1,5 @@
 import React from "react";
 import { borrow } from "@/constants";
-import Image from "next/image";
 
 interface Book {
   id: string;
@@ -32,7 +31,7 @@ const Table = ({ section }: { section: string }) => {
           {filteredBooks.map((book,idx) => (
             <tr key={idx} className="text-center">
               <td className="border border-gray-300 px-4 py-2 flex justify-center items-center">
-                <Image src={book.img} alt={book.img} height={50} width={50} />
+                <img src={book.img} alt={book.img} height={50} width={50} />
               </td>
               <td className="border border-gray-300 px-4 py-2">{book.title}</td>
               <td className="border border-gray-300 px-4 py-2">{book.auth}</td>

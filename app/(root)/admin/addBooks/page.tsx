@@ -9,8 +9,11 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BookOpen, Save, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 const AddBookPage = () => {
+  const router = useRouter(); // Move this here
+
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -21,34 +24,34 @@ const AddBookPage = () => {
     quantity: "",
     img: "",
     publishedDate: "",
-  })
+  });
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSelectChange = (value: string, name: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/books", {
+      const response = await fetch("/api/books/createBook", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
-        toast.success("Book added successfully!")
+        toast.success("Book added successfully!");
         setFormData({
           title: "",
           author: "",
@@ -59,17 +62,18 @@ const AddBookPage = () => {
           quantity: "",
           img: "",
           publishedDate: "",
-        })
+        });
+        router.push("/admin"); // Use the router here
       } else {
-        toast.error("Failed to add book. Please try again.")
+        toast.error("Failed to add book. Please try again.");
       }
     } catch (error) {
-      console.error("Error adding book:", error)
-      toast.error("An error occurred. Please try again.")
+      console.error("Error adding book:", error);
+      toast.error("An error occurred. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -79,7 +83,7 @@ const AddBookPage = () => {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -91,7 +95,7 @@ const AddBookPage = () => {
         stiffness: 100,
       },
     },
-  }
+  };
 
   return (
     <div className="container mx-auto py-10 px-4 flex items-center justify-center min-h-screen">

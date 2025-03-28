@@ -1,21 +1,68 @@
-import { IBook } from "../database/models/books.model";
-import Book from "../database/models/books.model";
-// Find all books
-export const findAllBooks = async (): Promise<IBook[]> => {
-  return await Book.find();
+import { Request, Response } from 'express';
+import Book from '../database/models/books.model'; // Assuming you have a Book model
+
+// Get all books
+export const getAllBooks = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const books = await Book.find();
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching books', error });
+    }
 };
 
-// Find book by ID
-export const findBookById = async (id: string): Promise<IBook | null> => {
-  return await Book.findById(id);
+// Get a single book by ID
+export const getBookById = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const book = await Book.findById(id);
+        if (!book) {
+            res.status(404).json({ message: 'Book not found' });
+            return;
+        }
+        res.status(200).json(book);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching book', error });
+    }
 };
 
-// Find books by category
-export const findBooksByCategory = async (category: string): Promise<IBook[]> => {
-  return await Book.find({ category });
+// Add a new book
+export const addBook = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const newBook = new Book(req.body);
+        const savedBook = await newBook.save();
+        res.status(201).json(savedBook);
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding book', error });
+    }
 };
 
-// Update book quantity
-export const updateBookQuantity = async (id: string, quantity: number): Promise<IBook | null> => {
-  return await Book.findByIdAndUpdate(id, { quantity }, { new: true });
+// Update a book
+export const updateBook = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const updatedBook = await Book.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updatedBook) {
+            res.status(404).json({ message: 'Book not found' });
+            return;
+        }
+        res.status(200).json(updatedBook);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating book', error });
+    }
+};
+
+// Delete a book
+export const deleteBook = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const deletedBook = await Book.findByIdAndDelete(id);
+        if (!deletedBook) {
+            res.status(404).json({ message: 'Book not found' });
+            return;
+        }
+        res.status(200).json({ message: 'Book deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting book', error });
+    }
 };
