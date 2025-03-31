@@ -154,7 +154,7 @@ const Page = () => {
             />
           </motion.div>
 
-          <motion.div custom={0.5} variants={heroImageVariants}>
+          {/* <motion.div custom={0.5} variants={heroImageVariants}>
             <Image
               src="/icons/import2/vector.svg"
               width={78}
@@ -162,7 +162,7 @@ const Page = () => {
               className="absolute top-[156px] left-[216px]"
               alt="Decorative vector"
             />
-          </motion.div>
+          </motion.div> */}
 
           <motion.div
             custom={1.5}
@@ -205,7 +205,7 @@ const Page = () => {
               alt="Buy text"
             />
           </motion.div>
-
+{/* 
           <motion.div custom={0.8} variants={heroImageVariants}>
             <Image
               src="/icons/import2/vector 3.svg"
@@ -214,7 +214,7 @@ const Page = () => {
               className="absolute top-[10px] left-[1287px]"
               alt="Decorative vector"
             />
-          </motion.div>
+          </motion.div> */}
 
           <motion.div
             custom={1.2}
