@@ -40,27 +40,28 @@ const AdminRequestsPage = () => {
   }
 
   // Approve a borrow request
-  const handleApprove = async (requestId: string, bookId: string) => {
-    setProcessing(requestId)
-    console.log("Approving request with payload:", { requestId, bookId })
+  const handleApprove = async (requestId: string, bookId: string, userId: string) => {
+    setProcessing(requestId);
+    console.log("Approving request with payload:", { requestId, bookId, userId });
     try {
       const response = await axios.post("/api/books/borrowRequests/approve", {
         requestId,
-        bookId,
-      })
+        bookId, // Ensure this is the correct field
+        userId, // Pass userId to the backend
+      });
 
       if (response.status === 200) {
-        toast.success("Request approved successfully!")
-        fetchRequests() // Refresh the list
+        toast.success("Request approved successfully!");
+        fetchRequests(); // Refresh the list
       } else {
-        toast.error("Failed to approve the request.")
+        toast.error("Failed to approve the request.");
       }
     } catch (error: any) {
-      console.error("Error approving request:", error)
-      const errorMessage = error.response?.data?.error || "An error occurred while approving the request."
-      toast.error(errorMessage)
+      console.error("Error approving request:", error);
+      const errorMessage = error.response?.data?.error || "An error occurred while approving the request.";
+      toast.error(errorMessage);
     } finally {
-      setProcessing(null)
+      setProcessing(null);
     }
   }
 
@@ -175,11 +176,12 @@ const AdminRequestsPage = () => {
                   {requests.map((request: BorrowRequest, idx) => {
                     const requestId = request.id || request._id || ""
                     const bookId = request.bookId || request.book_id || ""
+                    const userId = request.userId // Extract userId from the request
                     const isPending = request.status.toLowerCase() === "pending"
 
                     return (
                       <TableRow key={idx}>
-                        <TableCell className="font-medium">{request.userId}</TableCell>
+                        <TableCell className="font-medium">{userId}</TableCell>
                         <TableCell>{request.bookTitle}</TableCell>
                         <TableCell>{getStatusBadge(request.status)}</TableCell>
                         <TableCell className="text-right">
@@ -189,7 +191,7 @@ const AdminRequestsPage = () => {
                                 size="sm"
                                 variant="outline"
                                 className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800"
-                                onClick={() => handleApprove(requestId, bookId)}
+                                onClick={() => handleApprove(requestId, bookId, userId)} // Pass userId
                                 disabled={!!processing}
                               >
                                 {processing === requestId ? (
@@ -236,4 +238,3 @@ const AdminRequestsPage = () => {
 }
 
 export default AdminRequestsPage
-

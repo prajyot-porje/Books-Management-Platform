@@ -143,7 +143,7 @@ const BookModal = ({ section, isAdmin }: { section: IBook; isAdmin: boolean }) =
                 </div>
                 <div className="flex items-center gap-2">
                   <IndianRupee className="h-4 w-4 text-muted-foreground" />
-                  <span>Price: Rs.{section.price.toFixed(2)}</span>
+                  <span>Price: Rs.{section.price ? section.price.toFixed(2) : "N/A"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Grid className="h-4 w-4 text-muted-foreground" />

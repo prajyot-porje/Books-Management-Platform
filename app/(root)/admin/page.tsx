@@ -30,7 +30,15 @@ const BooksPage = () => {
     const fetchBooks = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/books/getBooks?status=${status}`);
+        let response;
+        if (status === "borrowed") {
+          // Fetch borrowed books
+          response = await fetch(`/api/books/getBorrowedBooks`);
+        } else {
+          // Fetch all books
+          response = await fetch(`/api/books/getBooks?status=${status}`);
+        }
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

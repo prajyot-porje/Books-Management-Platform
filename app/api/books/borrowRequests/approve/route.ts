@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import BorrowRequest from "@/lib/database/models/BorrowRequest.modal";
 import Book from "@/lib/database/models/books.model";
+import BorrowedBook from "@/lib/database/models/borrowedBook.model"; // Import BorrowedBook model
 import { connectToDatabase } from "@/lib/database";
 
 export async function POST(req: Request) {
   try {
-    const { requestId, bookId } = await req.json();
+    const { requestId, bookId, userId } = await req.json();
 
     if (!requestId || typeof requestId !== "string") {
       return NextResponse.json(
@@ -17,6 +18,13 @@ export async function POST(req: Request) {
     if (!bookId || typeof bookId !== "string") {
       return NextResponse.json(
         { error: "Invalid or missing bookId." },
+        { status: 400 }
+      );
+    }
+
+    if (!userId || typeof userId !== "string") {
+      return NextResponse.json(
+        { error: "Invalid or missing userId." },
         { status: 400 }
       );
     }
@@ -42,7 +50,30 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ message: "Request approved successfully." }, { status: 200 });
+    // Fetch book details for the given bookId
+    console.log("Received bookId:", bookId);
+    const bookDetails = await Book.findOne({ isbn: bookId }); // Use `_id` if that's the correct field
+    if (!bookDetails) {
+      return NextResponse.json(
+        { error: "Book not found." },
+        { status: 404 }
+      );
+    }
+
+    // Create a new borrowed book entry
+    const borrowedBook = new BorrowedBook({
+      userId, // Use the userId passed from the frontend
+      bookId: bookDetails.isbn, // Use `_id` if that's the correct field
+      borrowedDate: new Date(),
+      img: bookDetails.img, // Assuming the book model has an `img` field
+      title: bookDetails.title, // Assuming the book model has a `title` field
+      author: bookDetails.author, // Assuming the book model has an `author` field
+      status: "Borrowed",
+    });
+
+    await borrowedBook.save();
+
+    return NextResponse.json({ message: "Request approved and book borrowed successfully." }, { status: 200 });
   } catch (error) {
     console.error("Error approving request:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

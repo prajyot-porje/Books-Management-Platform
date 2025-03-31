@@ -4,17 +4,18 @@ export const UserNavitems = [
     link: "/user",
   },
   {
-    name: "My Book History",
-    link: "/user/history",
-  },
-  {
     name: "All Books",
     link: "/user/allbooks",
+  },
+  {
+    name: "My Book History",
+    link: "/user/history",
   },
   {
     name: "Requests",
     link: "/user/userRequests",
   },
+  
 ];
 
 export const placeholders = [
