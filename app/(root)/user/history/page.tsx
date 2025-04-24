@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { useAuth } from "@clerk/nextjs"
 import { motion, AnimatePresence } from "framer-motion"
@@ -9,7 +8,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Calendar, BookOpen } from "lucide-react"
 
 const BookTable = ({ books }: { books: any[] }) => {
-  // Function to calculate return date (15 days after borrowed date)
   const calculateReturnDate = (borrowedDate: string) => {
     const date = new Date(borrowedDate)
     date.setDate(date.getDate() + 15)
@@ -30,6 +28,7 @@ const BookTable = ({ books }: { books: any[] }) => {
             <TableHead>Author</TableHead>
             <TableHead>Borrowed Date</TableHead>
             <TableHead>Return Date</TableHead>
+            <TableHead>Fine</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -65,6 +64,7 @@ const BookTable = ({ books }: { books: any[] }) => {
                   <span>{calculateReturnDate(book.borrowedDate)}</span>
                 </div>
               </TableCell>
+              <TableCell>{book.fine}</TableCell>
               <TableCell>
                 <span
                   className={`px-2 py-0.5 rounded-full text-xs ${
@@ -92,6 +92,7 @@ const LoadingSkeleton = () => (
           <TableHead>Author</TableHead>
           <TableHead>Borrowed Date</TableHead>
           <TableHead>Return Date</TableHead>
+          <TableHead>Fine</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>

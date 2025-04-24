@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { useAuth } from "@clerk/nextjs"; // Import Clerk's useAuth hook
-import Image from "next/image";
 import { Modal, ModalBody, ModalTrigger } from "../ui/animated-modal";
 import { IBook } from "@/lib/database/models/books.model";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { AlertCircle, BookOpen, Calendar, DollarSign, Grid, IndianRupee, Tag, Users } from "lucide-react";
+import { AlertCircle, BookOpen, Calendar, IndianRupee, Tag, Grid, Users } from "lucide-react";
 import { Separator } from "../ui/separator";
 
 const BookModal = ({ section, isAdmin }: { section: IBook; isAdmin: boolean }) => {
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [messageType, setMessageType] = useState<"success" | "error">("error")
+  const [messageType, setMessageType] = useState<"success" | "error">("error");
   const { userId } = useAuth(); // Get the Clerk user ID
 
   const handleBorrow = async () => {
@@ -41,12 +40,15 @@ const BookModal = ({ section, isAdmin }: { section: IBook; isAdmin: boolean }) =
 
       if (response.ok) {
         setMessage("Borrow request submitted successfully!");
+        setMessageType("success");
       } else {
         setMessage(data.error || "Failed to submit borrow request.");
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Error submitting borrow request:", error);
       setMessage("An error occurred. Please try again.");
+      setMessageType("error");
     } finally {
       setLoading(false);
     }
@@ -84,16 +86,16 @@ const BookModal = ({ section, isAdmin }: { section: IBook; isAdmin: boolean }) =
               />
             )}
             <div className="flex flex-col items-start space-y-2 justify-center text-left w-full">
-              <div className="text-xl font-semibold overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+              <div className="text-xl font-semibold truncate max-w-[250px]">
                 {section.title}
               </div>
-              <div className="text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+              <div className="text-sm text-muted-foreground truncate max-w-[250px]">
                 by {section.author}
               </div>
-              <div className="text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+              <div className="text-sm text-muted-foreground truncate max-w-[250px]">
                 Published on {formatDate(section.publishedDate)}
               </div>
-              <Badge className="bg-green-400" variant={section.status.toLowerCase() === "available" ? "default" : "destructive"}>
+              <Badge className={section.status.toLowerCase() === "available" ? "bg-green-400" : "bg-red-400"}>
                 {section.status.toLowerCase() === "available" ? "Available" : "Not Available"}
               </Badge>
             </div>
@@ -152,7 +154,7 @@ const BookModal = ({ section, isAdmin }: { section: IBook; isAdmin: boolean }) =
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <span>Status: </span>
-                  <Badge className="bg-green-400 " variant={section.status.toLowerCase() === "available" ? "default" : "destructive"}>
+                  <Badge className={section.status.toLowerCase() === "available" ? "bg-green-400" : "bg-red-400"}>
                     {section.status.toLowerCase() === "available" ? "Available" : "Not Available"}
                   </Badge>
                 </div>
@@ -170,10 +172,10 @@ const BookModal = ({ section, isAdmin }: { section: IBook; isAdmin: boolean }) =
                   </Button>
 
                   {message && (
-                    <Alert >
-                      <AlertCircle className={`h-4 w-4 ${messageType === "success" ? "text-red-500" : "text-green-500"}`} />
-                      <AlertDescription className={messageType === "success" ? "text-red-500" : "text-green-500"}>
-                      {message}
+                    <Alert>
+                      <AlertCircle className={`h-4 w-4 ${messageType === "success" ? "text-green-500" : "text-red-500"}`} />
+                      <AlertDescription className={messageType === "success" ? "text-green-500" : "text-red-500"}>
+                        {message}
                       </AlertDescription>
                     </Alert>
                   )}

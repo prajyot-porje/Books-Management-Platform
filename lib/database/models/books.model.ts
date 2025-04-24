@@ -10,7 +10,7 @@ export interface IBook extends Document {
   quantity: number;
   img: string;
   publishedDate: Date;
-  status: string; // e.g., "Available", "Borrowed"
+  status: string; 
 }
 
 const BookSchema: Schema = new Schema({
@@ -25,8 +25,5 @@ const BookSchema: Schema = new Schema({
   publishedDate: { type: Date, required: true },
   status: { type: String, default: "Available" },
 });
-
-console.log("Mongoose Models:", mongoose.models); // Debugging log
-console.log("Registering Book Model...");
 
 export default mongoose.models.Book || mongoose.model<IBook>("Book", BookSchema);

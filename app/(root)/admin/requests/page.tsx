@@ -7,23 +7,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle, XCircle, AlertCircle, Loader2, BookOpenCheck } from "lucide-react"
+import Link from "next/link"
+import { RxCross2 } from "react-icons/rx"
 
 interface BorrowRequest {
   id?: string
   _id?: string
   userId: string
+  userName?: string
   bookId?: string
   book_id?: string
   bookTitle?: string
+  bookAuthor?: string
   status: string
   createdAt?: Date
+  img?: string
 }
 
 const AdminRequestsPage = () => {
   const [requests, setRequests] = useState<BorrowRequest[]>([])
   const [loading, setLoading] = useState(false)
   const [processing, setProcessing] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState("pending")
 
   // Fetch all borrow requests
   const fetchRequests = async () => {
@@ -39,36 +46,36 @@ const AdminRequestsPage = () => {
     }
   }
 
-  // Approve a borrow request
+  useEffect(() => {
+    fetchRequests()
+  }, [])
+
   const handleApprove = async (requestId: string, bookId: string, userId: string) => {
-    setProcessing(requestId);
-    console.log("Approving request with payload:", { requestId, bookId, userId });
+    setProcessing(requestId)
     try {
       const response = await axios.post("/api/books/borrowRequests/approve", {
         requestId,
-        bookId, // Ensure this is the correct field
-        userId, // Pass userId to the backend
-      });
+        bookId,
+        userId,
+      })
 
       if (response.status === 200) {
-        toast.success("Request approved successfully!");
-        fetchRequests(); // Refresh the list
+        toast.success("Request approved successfully!")
+        fetchRequests() // Refresh the list
       } else {
-        toast.error("Failed to approve the request.");
+        toast.error("Failed to approve the request.")
       }
     } catch (error: any) {
-      console.error("Error approving request:", error);
-      const errorMessage = error.response?.data?.error || "An error occurred while approving the request.";
-      toast.error(errorMessage);
+      console.error("Error approving request:", error)
+      const errorMessage = error.response?.data?.error || "An error occurred while approving the request."
+      toast.error(errorMessage)
     } finally {
-      setProcessing(null);
+      setProcessing(null)
     }
   }
 
-  // Reject a borrow request
   const handleReject = async (requestId: string) => {
     setProcessing(requestId)
-    console.log("Rejecting request with payload:", { requestId })
     try {
       const response = await axios.post("/api/books/borrowRequests/reject", {
         requestId,
@@ -88,10 +95,6 @@ const AdminRequestsPage = () => {
       setProcessing(null)
     }
   }
-
-  useEffect(() => {
-    fetchRequests()
-  }, [])
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -121,6 +124,118 @@ const AdminRequestsPage = () => {
     }
   }
 
+  // Filter requests by status
+  const pendingRequests = requests.filter((req) => req.status.toLowerCase() === "pending")
+  const approvedRequests = requests.filter((req) => req.status.toLowerCase() === "approved")
+  const rejectedRequests = requests.filter((req) => req.status.toLowerCase() === "rejected")
+
+  // Get count for each status
+  const pendingCount = pendingRequests.length
+  const approvedCount = approvedRequests.length
+  const rejectedCount = rejectedRequests.length
+
+  const renderRequestsTable = (filteredRequests: BorrowRequest[]) => {
+    if (filteredRequests.length === 0) {
+      return (
+        <div className="text-center py-12 bg-muted/50 rounded-lg">
+          <BookOpenCheck className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium">No requests found</h3>
+          <p className="text-muted-foreground mt-2">There are no book borrow requests in this category.</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Cover</TableHead>
+              <TableHead>Book</TableHead>
+              <TableHead>User</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredRequests.map((request: BorrowRequest, idx) => {
+              const requestId = request.id || request._id || ""
+              const isPending = request.status.toLowerCase() === "pending"
+
+              return (
+                <TableRow key={idx}>
+                  <TableCell className="font-medium">
+                    <div className="w-16 h-24 rounded-md overflow-hidden bg-muted">
+                      {request.img ? (
+                        <img
+                          src={request.img || "/placeholder.svg"}
+                          alt={request.bookTitle}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Skeleton className="h-full w-full" />
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <p className="font-medium">{request.bookTitle}</p>
+                      <p className="text-sm text-muted-foreground">{request.bookAuthor}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-medium">{request.userName}</TableCell>
+                  <TableCell>{getStatusBadge(request.status)}</TableCell>
+                  <TableCell className="text-right">
+                    {isPending ? (
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800"
+                          onClick={() =>
+                            handleApprove(requestId, request.bookId || request.book_id || "", request.userId)
+                          }
+                          disabled={!!processing}
+                        >
+                          {processing === requestId ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <CheckCircle className="mr-1 h-4 w-4" />
+                              Approve
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-red-200 bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800"
+                          onClick={() => handleReject(requestId)}
+                          disabled={!!processing}
+                        >
+                          {processing === requestId ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <XCircle className="mr-1 h-4 w-4" />
+                              Reject
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No actions available</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto py-8 px-4">
       <Card>
@@ -130,6 +245,7 @@ const AdminRequestsPage = () => {
               <CardTitle className="text-2xl font-bold">Borrow Requests</CardTitle>
               <CardDescription>Manage book borrow requests from users</CardDescription>
             </div>
+            <div className="flex items-center gap-2">
             <Button variant="outline" onClick={fetchRequests} disabled={loading} className="self-start md:self-auto">
               {loading ? (
                 <>
@@ -140,6 +256,12 @@ const AdminRequestsPage = () => {
                 <>Refresh</>
               )}
             </Button>
+            <Button asChild className="">
+              <Link href="/admin">
+                <RxCross2 className=" h-4 w-4" />
+              </Link>
+            </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -155,81 +277,47 @@ const AdminRequestsPage = () => {
                 </div>
               ))}
             </div>
-          ) : requests.length === 0 ? (
-            <div className="text-center py-12 bg-muted/50 rounded-lg">
-              <BookOpenCheck className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium">No borrow requests</h3>
-              <p className="text-muted-foreground mt-2">There are no book borrow requests at the moment.</p>
-            </div>
           ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Book</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {requests.map((request: BorrowRequest, idx) => {
-                    const requestId = request.id || request._id || ""
-                    const bookId = request.bookId || request.book_id || ""
-                    const userId = request.userId // Extract userId from the request
-                    const isPending = request.status.toLowerCase() === "pending"
+            <Tabs defaultValue="pending" value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid grid-cols-3 mb-6">
+                <TabsTrigger value="pending" className="relative">
+                  Pending
+                  {pendingCount > 0 && (
+                    <Badge className="ml-2 bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200">
+                      {pendingCount}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="approved" className="relative">
+                  Approved
+                  {approvedCount > 0 && (
+                    <Badge className="ml-2 bg-green-100 text-green-800 hover:bg-green-100 border-green-200">
+                      {approvedCount}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="rejected" className="relative">
+                  Rejected
+                  {rejectedCount > 0 && (
+                    <Badge className="ml-2 bg-red-100 text-red-800 hover:bg-red-100 border-red-200">
+                      {rejectedCount}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              </TabsList>
 
-                    return (
-                      <TableRow key={idx}>
-                        <TableCell className="font-medium">{userId}</TableCell>
-                        <TableCell>{request.bookTitle}</TableCell>
-                        <TableCell>{getStatusBadge(request.status)}</TableCell>
-                        <TableCell className="text-right">
-                          {isPending ? (
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800"
-                                onClick={() => handleApprove(requestId, bookId, userId)} // Pass userId
-                                disabled={!!processing}
-                              >
-                                {processing === requestId ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <CheckCircle className="mr-1 h-4 w-4" />
-                                    Approve
-                                  </>
-                                )}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-red-200 bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800"
-                                onClick={() => handleReject(requestId)}
-                                disabled={!!processing}
-                              >
-                                {processing === requestId ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <XCircle className="mr-1 h-4 w-4" />
-                                    Reject
-                                  </>
-                                )}
-                              </Button>
-                            </div>
-                          ) : (
-                            <span className="text-sm text-muted-foreground">No actions available</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+              <TabsContent value="pending" className="mt-0">
+                {renderRequestsTable(pendingRequests)}
+              </TabsContent>
+
+              <TabsContent value="approved" className="mt-0">
+                {renderRequestsTable(approvedRequests)}
+              </TabsContent>
+
+              <TabsContent value="rejected" className="mt-0">
+                {renderRequestsTable(rejectedRequests)}
+              </TabsContent>
+            </Tabs>
           )}
         </CardContent>
       </Card>
@@ -238,3 +326,4 @@ const AdminRequestsPage = () => {
 }
 
 export default AdminRequestsPage
+
